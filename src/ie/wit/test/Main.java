@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -15,11 +16,20 @@ import javafx.stage.Stage;
 * with button clicks.*/
 public class Main extends Application implements EventHandler<ActionEvent>
 {
-    Button button01;
-    Button button02;
-    Button button03;
-    VBox layout;
-    Scene scene;
+    Button basicEventHandler;
+    Button anonymousInnerClass;
+    Button lambdaExpression;
+    Button switchToScene02;
+    Button switchToScene01;
+
+    Label firstLabel;
+
+    VBox verticalLayout;
+    StackPane singleButtonLayout;
+
+    Scene firstScene;
+    Scene scene02;
+
     Stage window;
     public static void main(String[] args)
     {
@@ -35,18 +45,22 @@ public class Main extends Application implements EventHandler<ActionEvent>
         window = primaryStage;
         window.setTitle("My App");
 
-        button01 = new Button();
-        button01.setText("Click me!");
-        button02 = new Button("Click me too!");
-        button03 = new Button("Me Three!");
+        basicEventHandler = new Button();
+        basicEventHandler.setText("Basic Handler");
+        anonymousInnerClass = new Button("Anonymous Inner Class");
+        lambdaExpression = new Button("Lambda");
+        switchToScene02 = new Button("Go to scene two");
+        switchToScene01 = new Button("Back to the first scene");
+
+        firstLabel = new Label("This is the first scene");
         /*This tells the program that the handler for this button
         * is in this class.*/
-        button01.setOnAction(this);
+        basicEventHandler.setOnAction(this);
         /*This calls an Anonymous Inner Class to deal with the button click.
         * If using an anonymous inner class, it is not necessary to implement
-        * the EventHandler interface. This also removes the need t ocheck the
+        * the EventHandler interface. This also removes the need to check the
         * source of the event*/
-        button02.setOnAction(new EventHandler<ActionEvent>()
+        anonymousInnerClass.setOnAction(new EventHandler<ActionEvent>()
         {
             @Override
             public void handle(ActionEvent event)
@@ -55,20 +69,36 @@ public class Main extends Application implements EventHandler<ActionEvent>
             }
         });
 
-        button03.setOnAction(event -> System.out.println("I'm a lambda!"));
-        layout = new VBox();
-        layout.getChildren().addAll(button01, button02, button03);
+        /*This is a lambda. It is shorthand for using the anonymous inner class above.
+        * The reason that this works is because there is only one method in the EventHandler
+        * interface. Java knows, by context, that this is the method that we want*/
+        lambdaExpression.setOnAction(event -> {
+            System.out.print("I'm a lambda!");
+            System.out.println(" And you just clicked me!");
+        });
 
-        scene = new Scene(layout, 300, 250);
+        switchToScene02.setOnAction(event -> {
+            window.setScene(scene02);
+        });
+        switchToScene01.setOnAction(event -> {
+            window.setScene(firstScene);
+        });
+        verticalLayout = new VBox(20);
+        verticalLayout.getChildren().addAll(firstLabel ,basicEventHandler, anonymousInnerClass, lambdaExpression, switchToScene02);
+        singleButtonLayout = new StackPane();
+        singleButtonLayout.getChildren().addAll(switchToScene01);
 
-        window.setScene(scene);
+        firstScene = new Scene(verticalLayout, 300, 250);
+        scene02 = new Scene(singleButtonLayout, 250, 200);
+
+        window.setScene(firstScene);
         window.show();
     }
 
     @Override
     public void handle(ActionEvent event)
     {
-        if(event.getSource() == button01){
+        if(event.getSource() == basicEventHandler){
             System.out.println("Button clicked");
         }
     }
